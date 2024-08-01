@@ -148,7 +148,7 @@ class GPO:
                     return False
         return True
 
-    def update_scheduled_task(self, domain, gpo_id, name="", mod_date="", description="", powershell=False, command="", gpo_type="computer", force=False):
+    def update_scheduled_task(self, domain, gpo_id, name="", mod_date="", description="", powershell=False, command="", gpo_type="computer", force=False, filter=""):
 
         try:
             tid = self._smb_session.connectTree("SYSVOL")
@@ -180,7 +180,7 @@ class GPO:
             fid = self._smb_session.openFile(tid, path)
             st_content = self._smb_session.readFile(tid, fid, singleCall=False).decode("utf-8")
             st = ScheduledTask(gpo_type=gpo_type, name=name, mod_date=mod_date, description=description,
-                               powershell=powershell, command=command, old_value=st_content)
+                               powershell=powershell, command=command, old_value=st_content, filter=filter)
             tasks = st.parse_tasks(st_content)
 
             if not force:
@@ -202,7 +202,7 @@ class GPO:
             except:
                 logging.error("This user doesn't seem to have the necessary rights", exc_info=True)
                 return False
-            st = ScheduledTask(gpo_type=gpo_type, name=name, mod_date=mod_date, description=description, powershell=powershell, command=command)
+            st = ScheduledTask(gpo_type=gpo_type, name=name, mod_date=mod_date, description=description, powershell=powershell, command=command, filter=filter)
             new_content = st.generate_scheduled_task_xml()
 
         try:

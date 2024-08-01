@@ -39,7 +39,7 @@ parser.add_argument('-ldaps', action='store_true', help='Use LDAPS instead of LD
 parser.add_argument('-ccache', action='store', help='ccache file name (must be in local directory)')
 parser.add_argument('-f', action='store_true', help='Force add ScheduleTask')
 parser.add_argument('-v', action='count', default=0, help='Verbosity level (-v or -vv)')
-
+parser.add_argument("-filter", action="store", default="", help="machine filter")
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
@@ -127,7 +127,8 @@ try:
         powershell=options.powershell,
         command=options.command,
         gpo_type="user" if options.user else "computer",
-        force=options.f
+        force=options.f,
+        filter=options.filter,
     )
     if task_name:
         if gpo.update_versions(url, domain, options.gpo_id, gpo_type="user" if options.user else "computer",):
